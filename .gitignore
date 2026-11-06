@@ -1,8 +1,12 @@
-__pycache__/
 *.pyc
+.DS_Store
+.env
+.env.*
 .pytest_cache/
 .venv/
-tmp/
-site/.build-stamp
-.DS_Store
 Thumbs.db
+__pycache__/
+dist/*.tmp
+node_modules/
+site/.build-stamp
+tmp/
