@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CSVs — Everyday Batch-File Automation Handbook</title>
+<style>
+:root { --ink:#1f2430; --soft:#5a6270; --line:#e4e7ee; --paper:#ffffff; --wash:#f6f8fb; --accent:#2b6cb0; }
+* { box-sizing:border-box; }
+body { margin:0; font:17px/1.65 Georgia, 'Times New Roman', serif; color:var(--ink); background:var(--paper); }
+.layout { display:flex; max-width:1080px; margin:0 auto; padding:2rem 1rem; gap:2.5rem; }
+nav { flex:0 0 190px; position:sticky; top:2rem; align-self:flex-start; font-family:Verdana, sans-serif; }
+nav h1 { font-size:1.05rem; margin:0 0 .4rem; }
+nav p.brand { font-size:.8rem; color:var(--soft); margin:.2rem 0 1rem; }
+nav ol { list-style:none; margin:0; padding:0; font-size:.9rem; }
+nav ol a { display:block; padding:.35rem .5rem; color:var(--soft); text-decoration:none; border-left:3px solid transparent; }
+nav ol a:hover { color:var(--accent); }
+nav ol a.active { border-left-color:var(--accent); color:var(--accent); font-weight:bold; }
+main { flex:1; min-width:0; max-width:700px; }
+main h1, main h2, main h3, main h4 { line-height:1.25; font-family:Verdana, sans-serif; }
+main h1 { font-size:1.9rem; border-bottom:2px solid var(--line); padding-bottom:.4rem; }
+main h2 { font-size:1.35rem; margin-top:2rem; }
+h3 { font-size:1.1rem; }
+p, li { max-width:66ch; }
+a { color:var(--accent); }
+code { font-family:ui-monospace, 'Cascadia Code', Consolas, Menlo, monospace; font-size:.85em; background:var(--wash); border:1px solid var(--line); border-radius:3px; padding:.08em .35em; }
+pre { background:#22262e; color:#e8eaee; padding:1rem 1.2rem; border-radius:8px; overflow-x:auto; }
+pre code { background:none; border:none; color:inherit; padding:0; font-size:.88em; }
+table { border-collapse:collapse; margin:1.2rem 0; font-family:Verdana, sans-serif; font-size:.85rem; }
+th, td { border:1px solid var(--line); padding:.45em .8em; text-align:left; vertical-align:top; }
+th { background:var(--wash); }
+blockquote { margin:1.2rem 0; padding:.6rem 1.2rem; border-left:4px solid var(--accent); background:var(--wash); }
+blockquote p { max-width:none; }
+footer { border-top:1px solid var(--line); margin-top:2.5rem; padding:1.2rem 0; font-family:Verdana, sans-serif; font-size:.8rem; color:var(--soft); }
+@media (max-width:800px){ .layout { flex-direction:column; } nav { position:static; width:100%; } }
+</style>
+</head>
+<body>
+<div class="layout">
+<nav>
+<h1>Everyday Batch-File Automation Handbook</h1>
+<p class="brand">Asdale Dynamics, LLC</p>
+<ol>
+<a href="index.html">Home</a>
+<a href="01-start-here.html">Start Here</a>
+<a href="02-safety-first.html">Safety First</a>
+<a href="03-mass-rename.html">Mass Renames</a>
+<a href="04-csv-join-split.html" class="active">CSVs</a>
+<a href="05-pdf-join-split.html">PDFs</a>
+<a href="06-image-resize.html">Images</a>
+<a href="07-format-conversions.html">Other Formats</a>
+<a href="08-folder-rules.html">Folder Rules</a>
+<a href="09-ai-copilot.html">AI Co-Pilot</a>
+<a href="10-cookbook.html">Cookbook</a>
+</ol>
+</nav>
+<main>
+<h1>Chapter 4 — Joining and Splitting CSV Files</h1>
+<p>Every shipper, bank, and eBay seller exports spreadsheets by the month. Then Q1 tax prep arrives and you need one file with all three. Or: an online store happily accepts 500 rows at a time, and your export has 4,000. Join and split, by rule, not by dozens of copy-pastes.</p>
+<h2>Joining: <code>scripts/join_csv.py</code></h2>
+<p><strong>Preview:</strong></p>
+<pre><code class="language-bash">python scripts/join_csv.py ~/Desktop/bookkeeping --out ~/Desktop/q1-combined.csv
+</code></pre>
+<pre><code>Files to join: 3
+  jan.csv
+  feb.csv
+  mar.csv
+Header: date,description,amount
+Data rows in output: 412
+Output file: ~/Desktop/q1-combined.csv
+
+Dry run: nothing was written yet. Happy? Add --do-it.
+</code></pre>
+<p><strong>Commit with <code>--do-it</code>.</strong> Two built-in rails worth knowing:</p>
+<ul>
+<li><strong>Header matching.</strong> Every file's header row must be identical, or that file is <em>skipped</em> and reported — a mismatched file can't silently corrupt the combined table.</li>
+<li><strong>No clobbering.</strong> If <code>q1-combined.csv</code> already exists, the script refuses instead of overwriting it.</li>
+</ul>
+<p>Only join files whose headers really are the same (same columns, same order). The script enforces this; do the same by eye when you use the snapshots below.</p>
+<p><strong>Windows PowerShell snapshot:</strong></p>
+<pre><code class="language-powershell">Get-Content jan.csv, feb.csv, mar.csv | Set-Content q1-combined.csv
+</code></pre>
+<p>Caveat: this pastes every file's <em>header</em> too, so you'll get three header rows total. Fine for re-opening in Excel and deleting two junk rows; not fine for pricing software. The tested script keeps exactly one header. (Notice which option you choose for tax files.)</p>
+<p><strong>Mac bash snapshot:</strong> <code>cat jan.csv feb.csv mar.csv &gt; q1-combined.csv</code> — same header caveat, same remedy.</p>
+<h2>Splitting: <code>scripts/split_csv.py</code></h2>
+<p>Split a big CSV into pieces of N data rows (the header row is repeated in every piece — required for them to each still open sanely):</p>
+<pre><code class="language-bash">python scripts/split_csv.py ~/Desktop/orders/all-orders.csv --rows 500
+</code></pre>
+<pre><code>Input: all-orders.csv (4,000 data rows)
+Will write 8 piece(s), up to 500 data rows each:
+  all-orders_001.csv  (500 rows, header + 500 lines)
+  ...
+Dry run: nothing was written yet. Happy? Add --do-it.
+</code></pre>
+<p>Refuses to overwrite existing pieces; run twice, nothing twice-written.</p>
+<h2>Verify, don't hope</h2>
+<p>After joining, sanity-check by line count:</p>
+<pre><code class="language-bash"># Mac
+wc -l ~/Desktop/q1-combined.csv
+</code></pre>
+<pre><code class="language-powershell"># Windows
+(Get-Content $HOME\Desktop\q1-combined.csv).Count
+</code></pre>
+<p>Data rows should equal the sum the preview promised. A bookkeeping file that's short by 37 rows is a job for now, not tax season.</p>
+<h2>One more rail: character sets</h2>
+<p>Exports from older systems sometimes aren't UTF-8, and accented names (<code>José</code>, <code>naïve</code>) find out. The tested script reads with a tolerant decoder and writes UTF-8. If you ever get weird single-character garbage at the start of a file (<code>ï»¿</code>), that's a byte-order mark left by Windows software; the handled scripts swallow it, most plain <code>cat</code> joins don't.</p><footer>The Everyday Batch-File Automation Handbook &middot; by Asdale Dynamics, LLC &middot; MIT License &middot; Education only; never medical or compliance advice.</footer>
+</main>
+</div>
+</body>
+</html>

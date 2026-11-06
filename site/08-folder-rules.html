@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Folder Rules — Everyday Batch-File Automation Handbook</title>
+<style>
+:root { --ink:#1f2430; --soft:#5a6270; --line:#e4e7ee; --paper:#ffffff; --wash:#f6f8fb; --accent:#2b6cb0; }
+* { box-sizing:border-box; }
+body { margin:0; font:17px/1.65 Georgia, 'Times New Roman', serif; color:var(--ink); background:var(--paper); }
+.layout { display:flex; max-width:1080px; margin:0 auto; padding:2rem 1rem; gap:2.5rem; }
+nav { flex:0 0 190px; position:sticky; top:2rem; align-self:flex-start; font-family:Verdana, sans-serif; }
+nav h1 { font-size:1.05rem; margin:0 0 .4rem; }
+nav p.brand { font-size:.8rem; color:var(--soft); margin:.2rem 0 1rem; }
+nav ol { list-style:none; margin:0; padding:0; font-size:.9rem; }
+nav ol a { display:block; padding:.35rem .5rem; color:var(--soft); text-decoration:none; border-left:3px solid transparent; }
+nav ol a:hover { color:var(--accent); }
+nav ol a.active { border-left-color:var(--accent); color:var(--accent); font-weight:bold; }
+main { flex:1; min-width:0; max-width:700px; }
+main h1, main h2, main h3, main h4 { line-height:1.25; font-family:Verdana, sans-serif; }
+main h1 { font-size:1.9rem; border-bottom:2px solid var(--line); padding-bottom:.4rem; }
+main h2 { font-size:1.35rem; margin-top:2rem; }
+h3 { font-size:1.1rem; }
+p, li { max-width:66ch; }
+a { color:var(--accent); }
+code { font-family:ui-monospace, 'Cascadia Code', Consolas, Menlo, monospace; font-size:.85em; background:var(--wash); border:1px solid var(--line); border-radius:3px; padding:.08em .35em; }
+pre { background:#22262e; color:#e8eaee; padding:1rem 1.2rem; border-radius:8px; overflow-x:auto; }
+pre code { background:none; border:none; color:inherit; padding:0; font-size:.88em; }
+table { border-collapse:collapse; margin:1.2rem 0; font-family:Verdana, sans-serif; font-size:.85rem; }
+th, td { border:1px solid var(--line); padding:.45em .8em; text-align:left; vertical-align:top; }
+th { background:var(--wash); }
+blockquote { margin:1.2rem 0; padding:.6rem 1.2rem; border-left:4px solid var(--accent); background:var(--wash); }
+blockquote p { max-width:none; }
+footer { border-top:1px solid var(--line); margin-top:2.5rem; padding:1.2rem 0; font-family:Verdana, sans-serif; font-size:.8rem; color:var(--soft); }
+@media (max-width:800px){ .layout { flex-direction:column; } nav { position:static; width:100%; } }
+</style>
+</head>
+<body>
+<div class="layout">
+<nav>
+<h1>Everyday Batch-File Automation Handbook</h1>
+<p class="brand">Asdale Dynamics, LLC</p>
+<ol>
+<a href="index.html">Home</a>
+<a href="01-start-here.html">Start Here</a>
+<a href="02-safety-first.html">Safety First</a>
+<a href="03-mass-rename.html">Mass Renames</a>
+<a href="04-csv-join-split.html">CSVs</a>
+<a href="05-pdf-join-split.html">PDFs</a>
+<a href="06-image-resize.html">Images</a>
+<a href="07-format-conversions.html">Other Formats</a>
+<a href="08-folder-rules.html" class="active">Folder Rules</a>
+<a href="09-ai-copilot.html">AI Co-Pilot</a>
+<a href="10-cookbook.html">Cookbook</a>
+</ol>
+</nav>
+<main>
+<h1>Chapter 8 — Folder Rules: Taming a Wild Downloads Folder</h1>
+<p>A Downloads folder with 900 items is a to-do list written in someone else's handwriting. The fix is rules: <em>this kind of file lives there; this kind goes here; anything I don't recognize waits in one pile I'll see.</em> One command, run occasionally, forever.</p>
+<h2>The tested script: <code>scripts/sort_folder.py</code></h2>
+<pre><code class="language-bash">python scripts/sort_folder.py ~/Downloads
+</code></pre>
+<pre><code>Plan for Downloads — 312 file(s) would move:
+  archives/    &lt;- 19 file(s)
+  bookkeeping/ &lt;- 6 file(s)
+  code/        &lt;- 2 file(s)
+  data/        &lt;- 41 file(s)
+  documents/   &lt;- 113 file(s)
+  images/      &lt;- 87 file(s)
+  media/       &lt;- 22 file(s)
+  _unsorted/   &lt;- 22 file(s)
+
+Dry run: nothing changed yet. Contents are moved, never deleted or edited.
+Happy? Run the same command again with --do-it at the end.
+</code></pre>
+<p>Then add <code>--do-it</code> when the plan reads right.</p>
+<h2>The rules, in plain view</h2>
+<table>
+<thead>
+<tr>
+<th>File ends in...</th>
+<th>Lands in</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>jpg, png, gif, psd, heic...</td>
+<td><code>images/</code></td>
+</tr>
+<tr>
+<td>pdf, docx, txt, epub, md...</td>
+<td><code>documents/</code></td>
+</tr>
+<tr>
+<td>csv, xlsx, json...</td>
+<td><code>data/</code></td>
+</tr>
+<tr>
+<td>mp4, mp3, wav, mov...</td>
+<td><code>media/</code></td>
+</tr>
+<tr>
+<td>zip, rar, 7z, dmg, exe...</td>
+<td><code>archives/</code></td>
+</tr>
+<tr>
+<td>py, js, html, bat...</td>
+<td><code>code/</code></td>
+</tr>
+<tr>
+<td>qbo, ofx, qif (bank/QuickBooks exports)</td>
+<td><code>bookkeeping/</code></td>
+</tr>
+<tr>
+<td>anything else</td>
+<td><code>_unsorted/</code></td>
+</tr>
+</tbody>
+</table>
+<p>Rails, all present: extensions never deleted; name collisions get <code>-1</code>, <code>-2</code> suffixes instead of overwrites; anything weird is parked in <code>_unsorted/</code> where you can see it. Add <code>--by-year</code> to sort <em>inside</em> each rule folder by year (<code>documents/2024/</code>, <code>documents/2025/</code>) — the difference between "2026 tax box" and archival dirt.</p>
+<h2>The zero-Python snapshots</h2>
+<p><strong>Mac bash:</strong></p>
+<pre><code class="language-bash">mkdir -p pdfs images other
+for f in *.pdf; do echo mv &quot;$f&quot; pdfs/; done   # preview
+for f in *.pdf; do mv &quot;$f&quot; pdfs/; done
+for f in *.jpg *.png; do mv &quot;$f&quot; images/; done
+for f in *; do mv &quot;$f&quot; other/; done 2&gt;/dev/null   # leftovers, never delete
+</code></pre>
+<p><strong>Windows PowerShell:</strong></p>
+<pre><code class="language-powershell">New-Item -ItemType Directory -Force pdfs
+Get-ChildItem *.pdf | Move-Item -Destination pdfs
+</code></pre>
+<p>Both versions move-only. If you catch yourself writing <code>rm</code>, <code>del</code>, or <code>-Force</code> into a folder-cleanup command, close the laptop and start over (Chapter 2).</p>
+<h2>Why <code>_unsorted/</code> is the whole design</h2>
+<p>The mistake old cleanup scripts made: <code>else</code> bucket = delete. Unknown file types are exactly the files that matter — the odd <code>.eml</code> your pension provider sent, the <code>.qbx</code> Accountant's Copy, the <code>.pem</code> you shouldn't have on the Desktop at all. Park everything you can't classify in plain sight, and <em>decide by hand</em>. Sorting folders is a checklist, not a shredder.</p>
+<h2>Make it a habit, not a vigil</h2>
+<p>Run the preview weekly. It's 3 seconds. If the plan is boring, say so and do nothing — a dry run that shows "already tidy" is the automation equivalent of a smoke detector that is silent.</p><footer>The Everyday Batch-File Automation Handbook &middot; by Asdale Dynamics, LLC &middot; MIT License &middot; Education only; never medical or compliance advice.</footer>
+</main>
+</div>
+</body>
+</html>

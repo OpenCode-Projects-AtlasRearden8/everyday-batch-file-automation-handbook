@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Other Formats — Everyday Batch-File Automation Handbook</title>
+<style>
+:root { --ink:#1f2430; --soft:#5a6270; --line:#e4e7ee; --paper:#ffffff; --wash:#f6f8fb; --accent:#2b6cb0; }
+* { box-sizing:border-box; }
+body { margin:0; font:17px/1.65 Georgia, 'Times New Roman', serif; color:var(--ink); background:var(--paper); }
+.layout { display:flex; max-width:1080px; margin:0 auto; padding:2rem 1rem; gap:2.5rem; }
+nav { flex:0 0 190px; position:sticky; top:2rem; align-self:flex-start; font-family:Verdana, sans-serif; }
+nav h1 { font-size:1.05rem; margin:0 0 .4rem; }
+nav p.brand { font-size:.8rem; color:var(--soft); margin:.2rem 0 1rem; }
+nav ol { list-style:none; margin:0; padding:0; font-size:.9rem; }
+nav ol a { display:block; padding:.35rem .5rem; color:var(--soft); text-decoration:none; border-left:3px solid transparent; }
+nav ol a:hover { color:var(--accent); }
+nav ol a.active { border-left-color:var(--accent); color:var(--accent); font-weight:bold; }
+main { flex:1; min-width:0; max-width:700px; }
+main h1, main h2, main h3, main h4 { line-height:1.25; font-family:Verdana, sans-serif; }
+main h1 { font-size:1.9rem; border-bottom:2px solid var(--line); padding-bottom:.4rem; }
+main h2 { font-size:1.35rem; margin-top:2rem; }
+h3 { font-size:1.1rem; }
+p, li { max-width:66ch; }
+a { color:var(--accent); }
+code { font-family:ui-monospace, 'Cascadia Code', Consolas, Menlo, monospace; font-size:.85em; background:var(--wash); border:1px solid var(--line); border-radius:3px; padding:.08em .35em; }
+pre { background:#22262e; color:#e8eaee; padding:1rem 1.2rem; border-radius:8px; overflow-x:auto; }
+pre code { background:none; border:none; color:inherit; padding:0; font-size:.88em; }
+table { border-collapse:collapse; margin:1.2rem 0; font-family:Verdana, sans-serif; font-size:.85rem; }
+th, td { border:1px solid var(--line); padding:.45em .8em; text-align:left; vertical-align:top; }
+th { background:var(--wash); }
+blockquote { margin:1.2rem 0; padding:.6rem 1.2rem; border-left:4px solid var(--accent); background:var(--wash); }
+blockquote p { max-width:none; }
+footer { border-top:1px solid var(--line); margin-top:2.5rem; padding:1.2rem 0; font-family:Verdana, sans-serif; font-size:.8rem; color:var(--soft); }
+@media (max-width:800px){ .layout { flex-direction:column; } nav { position:static; width:100%; } }
+</style>
+</head>
+<body>
+<div class="layout">
+<nav>
+<h1>Everyday Batch-File Automation Handbook</h1>
+<p class="brand">Asdale Dynamics, LLC</p>
+<ol>
+<a href="index.html">Home</a>
+<a href="01-start-here.html">Start Here</a>
+<a href="02-safety-first.html">Safety First</a>
+<a href="03-mass-rename.html">Mass Renames</a>
+<a href="04-csv-join-split.html">CSVs</a>
+<a href="05-pdf-join-split.html">PDFs</a>
+<a href="06-image-resize.html">Images</a>
+<a href="07-format-conversions.html" class="active">Other Formats</a>
+<a href="08-folder-rules.html">Folder Rules</a>
+<a href="09-ai-copilot.html">AI Co-Pilot</a>
+<a href="10-cookbook.html">Cookbook</a>
+</ol>
+</nav>
+<main>
+<h1>Chapter 7 — Other Format Conversions (Text, Docs, Archives)</h1>
+<p>The images, PDFs, and CSVs had their chapters. The stragglers — converting a <code>.txt</code> to UTF-8 the fancy reading app accepts, unzipping forty archives, pushing fifty <code>.pages</code> documents into something the printer understands — live here. Short chapter, mostly because honest advice is: <em>these jobs narrow fast, and the tested-script habit is worth carrying into them.</em></p>
+<h2>The honest map</h2>
+<table>
+<thead>
+<tr>
+<th>Job</th>
+<th>Winner</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Text encoding (<code>latin-1</code> → UTF-8)</td>
+<td>Python one-liner or ask the AI co-pilot</td>
+</tr>
+<tr>
+<td>Word/Pages/ODT → PDF</td>
+<td>The <em>application</em>: Word "Save As"; Pages "Export." Batch-converts elegantly when the app can see all files at once</td>
+</tr>
+<tr>
+<td><code>.doc</code> → <code>.docx</code></td>
+<td>Same — the app, not a script</td>
+</tr>
+<tr>
+<td>Unzip everything in a folder</td>
+<td>Built-in zip tools + a loop (below)</td>
+</tr>
+<tr>
+<td>Image and PDF and CSV conversions</td>
+<td>Chapters 4–6 — you've already got them</td>
+</tr>
+</tbody>
+</table>
+<h2>Unzip everything (a classic)</h2>
+<p><strong>Mac bash:</strong></p>
+<pre><code class="language-bash">for z in *.zip; do echo unzip -q &quot;$z&quot; -d &quot;${z%.zip}&quot;; done   # preview
+for z in *.zip; do unzip -q &quot;$z&quot; -d &quot;${z%.zip}&quot;; done
+</code></pre>
+<p><strong>Windows PowerShell:</strong></p>
+<pre><code class="language-powershell">Get-ChildItem *.zip | ForEach-Object { Expand-Archive -Path $_.FullName -DestinationPath $_.Name.Substring(0, $_.Name.Length - 4) }
+</code></pre>
+<p><code>Expand-Archive</code> refuses to overwrite an existing <code>-DestinationPath</code>, which conveniently behaves like our never-overwrite rail — that's a <em>feature</em>, not an error to work around.</p>
+<h2>Text encoding, the quiet threat</h2>
+<p>Symptom: you open a <code>.txt</code> and see <code>ï»¿</code> or black diamonds (<code>�</code>). That's an encoding mismatch, not corruption — the bytes were fine, the reader guessed the wrong dictionary. Fix by re-touching the file as UTF-8:</p>
+<pre><code class="language-bash"># Mac (iconv is preinstalled) — preview first with nm? Just do a couple of test files.
+iconv -f WINDOWS-1252 -t UTF-8 one-old-file.txt &gt; one-old-file.utf8.txt
+</code></pre>
+<p>No in-place overwrite until a sample file reads correctly in your app. Then it's a loop. (If asking an AI co-pilot, include "preview output before overwriting the original" in the request.)</p>
+<h2>When conversions feel like too much</h2>
+<p>Some formats deserve a script you read carefully rather than one you trust: spreadsheet formats with formulas (<code>.xlsx</code> with <code>.qbo</code> financial data behind them), anything with digital signatures, anything for court or insurance. The converting disaster mode — dates turning into numbers (<code>3/1/26</code> → some integer), leading zeros eaten from ZIP codes — is software-specific and <em>silent</em>. When money or signatures are in play, open the files in the native app and export from there, even if it's slower.</p>
+<h2>The rule this chapter really teaches</h2>
+<p><strong>Prefer converting <em>from</em> the original application when there is one.</strong> Python + libraries are wonderful for the pile-shaped jobs (Chapters 3–6, 8). Single-file, high-stakes, format-specific jobs belong to Word, Excel, QuickBooks, and Pages. Knowing which is which <em>is</em> the skill.</p><footer>The Everyday Batch-File Automation Handbook &middot; by Asdale Dynamics, LLC &middot; MIT License &middot; Education only; never medical or compliance advice.</footer>
+</main>
+</div>
+</body>
+</html>

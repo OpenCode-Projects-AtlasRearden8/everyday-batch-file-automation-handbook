@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AI Co-Pilot — Everyday Batch-File Automation Handbook</title>
+<style>
+:root { --ink:#1f2430; --soft:#5a6270; --line:#e4e7ee; --paper:#ffffff; --wash:#f6f8fb; --accent:#2b6cb0; }
+* { box-sizing:border-box; }
+body { margin:0; font:17px/1.65 Georgia, 'Times New Roman', serif; color:var(--ink); background:var(--paper); }
+.layout { display:flex; max-width:1080px; margin:0 auto; padding:2rem 1rem; gap:2.5rem; }
+nav { flex:0 0 190px; position:sticky; top:2rem; align-self:flex-start; font-family:Verdana, sans-serif; }
+nav h1 { font-size:1.05rem; margin:0 0 .4rem; }
+nav p.brand { font-size:.8rem; color:var(--soft); margin:.2rem 0 1rem; }
+nav ol { list-style:none; margin:0; padding:0; font-size:.9rem; }
+nav ol a { display:block; padding:.35rem .5rem; color:var(--soft); text-decoration:none; border-left:3px solid transparent; }
+nav ol a:hover { color:var(--accent); }
+nav ol a.active { border-left-color:var(--accent); color:var(--accent); font-weight:bold; }
+main { flex:1; min-width:0; max-width:700px; }
+main h1, main h2, main h3, main h4 { line-height:1.25; font-family:Verdana, sans-serif; }
+main h1 { font-size:1.9rem; border-bottom:2px solid var(--line); padding-bottom:.4rem; }
+main h2 { font-size:1.35rem; margin-top:2rem; }
+h3 { font-size:1.1rem; }
+p, li { max-width:66ch; }
+a { color:var(--accent); }
+code { font-family:ui-monospace, 'Cascadia Code', Consolas, Menlo, monospace; font-size:.85em; background:var(--wash); border:1px solid var(--line); border-radius:3px; padding:.08em .35em; }
+pre { background:#22262e; color:#e8eaee; padding:1rem 1.2rem; border-radius:8px; overflow-x:auto; }
+pre code { background:none; border:none; color:inherit; padding:0; font-size:.88em; }
+table { border-collapse:collapse; margin:1.2rem 0; font-family:Verdana, sans-serif; font-size:.85rem; }
+th, td { border:1px solid var(--line); padding:.45em .8em; text-align:left; vertical-align:top; }
+th { background:var(--wash); }
+blockquote { margin:1.2rem 0; padding:.6rem 1.2rem; border-left:4px solid var(--accent); background:var(--wash); }
+blockquote p { max-width:none; }
+footer { border-top:1px solid var(--line); margin-top:2.5rem; padding:1.2rem 0; font-family:Verdana, sans-serif; font-size:.8rem; color:var(--soft); }
+@media (max-width:800px){ .layout { flex-direction:column; } nav { position:static; width:100%; } }
+</style>
+</head>
+<body>
+<div class="layout">
+<nav>
+<h1>Everyday Batch-File Automation Handbook</h1>
+<p class="brand">Asdale Dynamics, LLC</p>
+<ol>
+<a href="index.html">Home</a>
+<a href="01-start-here.html">Start Here</a>
+<a href="02-safety-first.html">Safety First</a>
+<a href="03-mass-rename.html">Mass Renames</a>
+<a href="04-csv-join-split.html">CSVs</a>
+<a href="05-pdf-join-split.html">PDFs</a>
+<a href="06-image-resize.html">Images</a>
+<a href="07-format-conversions.html">Other Formats</a>
+<a href="08-folder-rules.html">Folder Rules</a>
+<a href="09-ai-copilot.html" class="active">AI Co-Pilot</a>
+<a href="10-cookbook.html">Cookbook</a>
+</ol>
+</nav>
+<main>
+<h1>Chapter 9 — AI as Your Script Co-Pilot</h1>
+<p>Everything so far used tested scripts that ship with this handbook. The very next job you'll meet isn't in here — "rename each file with the date hidden inside its filename," "split this CSV only when column B changes." That's where AI earns its keep: as the co-pilot who writes the script, while <em>you</em> stay the pilot who previews and says yes.</p>
+<h2>The five-sentence request (copy this whole thing)</h2>
+<blockquote>
+<p>I need a short Python 3 script. It should: (1) work from the command line with plain <code>argparse</code>; (2) do a <strong>dry run by default</strong> that prints exactly which files it would change and to what; (3) only act when I pass <code>--do-it</code>; (4) <strong>never overwrite an existing file</strong> and <strong>never delete anything</strong> — if a result name is taken, cancel the run with a clear message; (5) exit with a nonzero code if anything looks wrong. The job: [DESCRIBE YOUR MESS HERE]. Then write five <code>unittest</code> tests for it, including a dry-run-changes-nothing test and a collision-cancels test.</p>
+</blockquote>
+<p>Those five wants are the entirety of Chapter 2's rails turned into an instruction. Run tests with:</p>
+<pre><code class="language-bash">python -m unittest discover -s tests
+</code></pre>
+<p>If the AI's script fails them, that's a <em>good</em> outcome — you found the bug on a scratch folder, not on your tax records.</p>
+<h2>Prompting habits that separate pilots from passengers</h2>
+<p><strong>Describe the mess, not the code.</strong> "Files arrive named <code>LAB-4821.jpg</code> but our software demands <code>2026-03-04-4821.jpg</code> where the date comes from an adjacent <code>shots.csv</code>" beats "write a Python script with os.walk."</p>
+<p><strong>Ask for the preview to be human-readable.</strong> "The dry run should print <code>old name → new name</code> pairs and a count" is a stronger prompt than a vague preview request. You'll be reading that list with your own eyes at decision speed.</p>
+<p><strong>Give one sample of good output.</strong> "One output line for <code>IMG_4821.jpg</code> should look like: <code>IMG_4821.jpg -&gt; 2026-03-04-4821.jpg</code>" removes whole categories of misunderstanding.</p>
+<p><strong>Make it write tests.</strong> The sentence "tests instead of prose" is the culture here: a script whose behavior is <em>demonstrated</em> beats a confidently-worded paragraph every time. If an AI's tests only test the happy path, ask: "add the case where the folder has an unexpected file, and one where I run it twice."</p>
+<p><strong>Refuse the unsafe on sight.</strong> The co-pilot may propose <code>shutil.rmtree</code>, <code>os.remove</code>, or an <code>-Force</code>/overwrite flag "to keep it simple." Your reply: <em>"No deletion, no overwrite. Use the five rules from my first message."</em> A good co-pilot complies in one breath; a sloppy one argues. Models that argue about Phase-2-safety rails are the ones to write dry runs about.</p>
+<h2>Review the script like a pilot, not a passenger</h2>
+<p>Three things, 90 seconds, every time:</p>
+<ol>
+<li><strong>Find the no-touch guarantee.</strong> Search the script for <code>.remove(</code>, <code>.rmtree(</code>, <code>unlink(</code>, <code>"w"</code> open modes against input files, <code>Remove-Item</code>, <code>rm</code>, <code>-Force</code>. Nothing in a compliant plan should be there.</li>
+<li><strong>Find where <code>--do-it</code> is checked.</strong> You want to see the check <em>before</em> any file action happens, not after.</li>
+<li><strong>Then run it — on a copy.</strong> Chapter 2's rehearsal folder: ten sample files, full preview-then-<code>--do-it</code> cycle, eyeball the ten results. Only then point it at the real pile.</li>
+</ol>
+<h2>Prompt to turn any chapter into your job</h2>
+<blockquote>
+<p>Take this script from the handbook: [PASTE SCRIPT]. Adapt it so [NEW REQUIREMENT]. Keep all five rails intact — dry-run-by-default, <code>--do-it</code> to commit, never overwrite, never delete, nonzero exit on failure — and keep the same argument names so the handbook's docs still apply. List any behavior you couldn't preserve.</p>
+</blockquote>
+<p>That last sentence ("list what you couldn't preserve") is where you catch the corner cases that turn into losses — write down the list before running anything.</p>
+<h2>When NOT to co-pilot</h2>
+<p>Regulated money, health information, court documents: if it's one file, convert it in the native application (Chapter 7's rule). If a prompt failure could cost a license, the honest speed-up is doing it the slow way. AI co-pilots make <em>volume</em> safe; they don't make <em>stakes</em> disappear.</p><footer>The Everyday Batch-File Automation Handbook &middot; by Asdale Dynamics, LLC &middot; MIT License &middot; Education only; never medical or compliance advice.</footer>
+</main>
+</div>
+</body>
+</html>

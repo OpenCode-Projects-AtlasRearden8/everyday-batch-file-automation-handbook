@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cookbook — Everyday Batch-File Automation Handbook</title>
+<style>
+:root { --ink:#1f2430; --soft:#5a6270; --line:#e4e7ee; --paper:#ffffff; --wash:#f6f8fb; --accent:#2b6cb0; }
+* { box-sizing:border-box; }
+body { margin:0; font:17px/1.65 Georgia, 'Times New Roman', serif; color:var(--ink); background:var(--paper); }
+.layout { display:flex; max-width:1080px; margin:0 auto; padding:2rem 1rem; gap:2.5rem; }
+nav { flex:0 0 190px; position:sticky; top:2rem; align-self:flex-start; font-family:Verdana, sans-serif; }
+nav h1 { font-size:1.05rem; margin:0 0 .4rem; }
+nav p.brand { font-size:.8rem; color:var(--soft); margin:.2rem 0 1rem; }
+nav ol { list-style:none; margin:0; padding:0; font-size:.9rem; }
+nav ol a { display:block; padding:.35rem .5rem; color:var(--soft); text-decoration:none; border-left:3px solid transparent; }
+nav ol a:hover { color:var(--accent); }
+nav ol a.active { border-left-color:var(--accent); color:var(--accent); font-weight:bold; }
+main { flex:1; min-width:0; max-width:700px; }
+main h1, main h2, main h3, main h4 { line-height:1.25; font-family:Verdana, sans-serif; }
+main h1 { font-size:1.9rem; border-bottom:2px solid var(--line); padding-bottom:.4rem; }
+main h2 { font-size:1.35rem; margin-top:2rem; }
+h3 { font-size:1.1rem; }
+p, li { max-width:66ch; }
+a { color:var(--accent); }
+code { font-family:ui-monospace, 'Cascadia Code', Consolas, Menlo, monospace; font-size:.85em; background:var(--wash); border:1px solid var(--line); border-radius:3px; padding:.08em .35em; }
+pre { background:#22262e; color:#e8eaee; padding:1rem 1.2rem; border-radius:8px; overflow-x:auto; }
+pre code { background:none; border:none; color:inherit; padding:0; font-size:.88em; }
+table { border-collapse:collapse; margin:1.2rem 0; font-family:Verdana, sans-serif; font-size:.85rem; }
+th, td { border:1px solid var(--line); padding:.45em .8em; text-align:left; vertical-align:top; }
+th { background:var(--wash); }
+blockquote { margin:1.2rem 0; padding:.6rem 1.2rem; border-left:4px solid var(--accent); background:var(--wash); }
+blockquote p { max-width:none; }
+footer { border-top:1px solid var(--line); margin-top:2.5rem; padding:1.2rem 0; font-family:Verdana, sans-serif; font-size:.8rem; color:var(--soft); }
+@media (max-width:800px){ .layout { flex-direction:column; } nav { position:static; width:100%; } }
+</style>
+</head>
+<body>
+<div class="layout">
+<nav>
+<h1>Everyday Batch-File Automation Handbook</h1>
+<p class="brand">Asdale Dynamics, LLC</p>
+<ol>
+<a href="index.html">Home</a>
+<a href="01-start-here.html">Start Here</a>
+<a href="02-safety-first.html">Safety First</a>
+<a href="03-mass-rename.html">Mass Renames</a>
+<a href="04-csv-join-split.html">CSVs</a>
+<a href="05-pdf-join-split.html">PDFs</a>
+<a href="06-image-resize.html">Images</a>
+<a href="07-format-conversions.html">Other Formats</a>
+<a href="08-folder-rules.html">Folder Rules</a>
+<a href="09-ai-copilot.html">AI Co-Pilot</a>
+<a href="10-cookbook.html" class="active">Cookbook</a>
+</ol>
+</nav>
+<main>
+<h1>Chapter 10 — Cookbook: Windows ↔ Mac Side by Side</h1>
+<p>No chapter-length tour. Just the moves, labeled, with the preview line and the commit line always shown separately. <code>python</code> = Windows PowerShell spelling; Macs use <code>python3</code> (Chapter 1).</p>
+<h2>Rename</h2>
+<pre><code class="language-powershell"># Windows PowerShell - WhatIf previews; Remove it to commit
+Get-ChildItem IMG_*.jpg | Rename-Item -WhatIf -NewName { $_.Name -replace 'IMG_','IMG-' }
+Get-ChildItem IMG_*.jpg | Rename-Item -NewName { $_.Name -replace 'IMG_','IMG-' }
+</code></pre>
+<pre><code class="language-bash"># Mac bash — echo previews; remove echo to commit
+for f in IMG_*.jpg; do echo mv &quot;$f&quot; &quot;${f/IMG_/IMG-}&quot;; done
+for f in IMG_*.jpg; do mv &quot;$f&quot; &quot;${f/IMG_/IMG-}&quot;; done
+</code></pre>
+<p>Tested one-command version (preview built in; add <code>--do-it</code> when happy):</p>
+<pre><code class="language-bash">python scripts/batch_rename.py . --action replace --old IMG_ --old2 IMG-
+</code></pre>
+<h2>Join / split CSVs</h2>
+<pre><code class="language-bash"># Mac snapshot
+cat *.csv &gt; all.csv          # headers get pasted too - see Ch 4 caveat
+</code></pre>
+<pre><code class="language-powershell"># Windows snapshot
+Get-Content *.csv | Set-Content all.csv
+</code></pre>
+<pre><code class="language-bash">python scripts/join_csv.py . --out ../all.csv        # tested, one-header, refuses to clobber
+python scripts/split_csv.py big.csv --rows 500 --do-it
+</code></pre>
+<h2>Merge / split PDFs (<code>pip install pypdf</code> first)</h2>
+<pre><code class="language-bash">python scripts/join_pdfs.py --folder ~/Desktop/invoices --out ~/Desktop/all.pdf
+python scripts/split_pdfs.py ~/Desktop/big-scan.pdf --every 25 --do-it
+</code></pre>
+<p>Mac one-liner fallback (prebuilt into macOS):</p>
+<pre><code class="language-bash">&quot;/System/Library/Automator/Combine PDF Pages.action/Contents/MacOS/join&quot; -o merged.pdf *.pdf
+</code></pre>
+<h2>Resize images (<code>pip install Pillow</code> first)</h2>
+<pre><code class="language-bash">python scripts/resize_images.py ~/Pictures/photos --max-edge 1600 --do-it
+</code></pre>
+<p>Mac snapshot — note this one <em>overwrites</em>, so redirect output:</p>
+<pre><code class="language-bash">mkdir -p small
+sips -Z 1600 ~/Pictures/photos/*.jpg --out small
+</code></pre>
+<p>(Windows built-ins: see Chapter 6.)</p>
+<h2>Unzip a folder</h2>
+<pre><code class="language-powershell">Get-ChildItem *.zip | ForEach-Object { Expand-Archive $_.FullName -DestinationPath ($_.BaseName) }
+</code></pre>
+<pre><code class="language-bash">for z in *.zip; do unzip -q &quot;$z&quot; -d &quot;${z%.zip}&quot;; done
+</code></pre>
+<h2>Sort the Downloads folder</h2>
+<pre><code class="language-bash">python scripts/sort_folder.py ~/Downloads      # preview, then --do-it
+python scripts/sort_folder.py ~/Downloads --do-it --by-year
+</code></pre>
+<pre><code class="language-powershell"># Windows snapshot (one rule; the tested script encodes the whole rulebook)
+New-Item -ItemType Directory -Force pdfs
+Get-ChildItem *.pdf | Move-Item -Destination pdfs
+</code></pre>
+<h2>Run all the tests, prove the toolkit to yourself</h2>
+<pre><code class="language-bash">python -m unittest discover -s tests        # Mac: python3 -m unittest discover -s tests
+</code></pre>
+<h2>The whole book in one sentence</h2>
+<p>Preview, read it, <code>--do-it</code>. Every time, on every tool, forever.</p><footer>The Everyday Batch-File Automation Handbook &middot; by Asdale Dynamics, LLC &middot; MIT License &middot; Education only; never medical or compliance advice.</footer>
+</main>
+</div>
+</body>
+</html>

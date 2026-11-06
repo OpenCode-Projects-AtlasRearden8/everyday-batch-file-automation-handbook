@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Images — Everyday Batch-File Automation Handbook</title>
+<style>
+:root { --ink:#1f2430; --soft:#5a6270; --line:#e4e7ee; --paper:#ffffff; --wash:#f6f8fb; --accent:#2b6cb0; }
+* { box-sizing:border-box; }
+body { margin:0; font:17px/1.65 Georgia, 'Times New Roman', serif; color:var(--ink); background:var(--paper); }
+.layout { display:flex; max-width:1080px; margin:0 auto; padding:2rem 1rem; gap:2.5rem; }
+nav { flex:0 0 190px; position:sticky; top:2rem; align-self:flex-start; font-family:Verdana, sans-serif; }
+nav h1 { font-size:1.05rem; margin:0 0 .4rem; }
+nav p.brand { font-size:.8rem; color:var(--soft); margin:.2rem 0 1rem; }
+nav ol { list-style:none; margin:0; padding:0; font-size:.9rem; }
+nav ol a { display:block; padding:.35rem .5rem; color:var(--soft); text-decoration:none; border-left:3px solid transparent; }
+nav ol a:hover { color:var(--accent); }
+nav ol a.active { border-left-color:var(--accent); color:var(--accent); font-weight:bold; }
+main { flex:1; min-width:0; max-width:700px; }
+main h1, main h2, main h3, main h4 { line-height:1.25; font-family:Verdana, sans-serif; }
+main h1 { font-size:1.9rem; border-bottom:2px solid var(--line); padding-bottom:.4rem; }
+main h2 { font-size:1.35rem; margin-top:2rem; }
+h3 { font-size:1.1rem; }
+p, li { max-width:66ch; }
+a { color:var(--accent); }
+code { font-family:ui-monospace, 'Cascadia Code', Consolas, Menlo, monospace; font-size:.85em; background:var(--wash); border:1px solid var(--line); border-radius:3px; padding:.08em .35em; }
+pre { background:#22262e; color:#e8eaee; padding:1rem 1.2rem; border-radius:8px; overflow-x:auto; }
+pre code { background:none; border:none; color:inherit; padding:0; font-size:.88em; }
+table { border-collapse:collapse; margin:1.2rem 0; font-family:Verdana, sans-serif; font-size:.85rem; }
+th, td { border:1px solid var(--line); padding:.45em .8em; text-align:left; vertical-align:top; }
+th { background:var(--wash); }
+blockquote { margin:1.2rem 0; padding:.6rem 1.2rem; border-left:4px solid var(--accent); background:var(--wash); }
+blockquote p { max-width:none; }
+footer { border-top:1px solid var(--line); margin-top:2.5rem; padding:1.2rem 0; font-family:Verdana, sans-serif; font-size:.8rem; color:var(--soft); }
+@media (max-width:800px){ .layout { flex-direction:column; } nav { position:static; width:100%; } }
+</style>
+</head>
+<body>
+<div class="layout">
+<nav>
+<h1>Everyday Batch-File Automation Handbook</h1>
+<p class="brand">Asdale Dynamics, LLC</p>
+<ol>
+<a href="index.html">Home</a>
+<a href="01-start-here.html">Start Here</a>
+<a href="02-safety-first.html">Safety First</a>
+<a href="03-mass-rename.html">Mass Renames</a>
+<a href="04-csv-join-split.html">CSVs</a>
+<a href="05-pdf-join-split.html">PDFs</a>
+<a href="06-image-resize.html" class="active">Images</a>
+<a href="07-format-conversions.html">Other Formats</a>
+<a href="08-folder-rules.html">Folder Rules</a>
+<a href="09-ai-copilot.html">AI Co-Pilot</a>
+<a href="10-cookbook.html">Cookbook</a>
+</ol>
+</nav>
+<main>
+<h1>Chapter 6 — Resizing and Converting Images the Batch Way</h1>
+<p>Two everyday jobs: shrink 140 seller photos so your listing page stops crawling, and turn formats so software accepts them (<code>heic</code> on a Windows machine, <code>png</code> where a JPEG is demanded).</p>
+<h2>One-time setup</h2>
+<pre><code class="language-bash">pip install Pillow       # Mac: pip3 install Pillow
+</code></pre>
+<h2>Resize: <code>scripts/resize_images.py</code></h2>
+<p>Shrink to a <strong>max edge</strong> (longest side) — this is usually what you want, because it keeps aspect ratio and never enlarges:</p>
+<pre><code class="language-bash">python scripts/resize_images.py ~/Pictures/listing-photos --max-edge 1600
+</code></pre>
+<pre><code>Making new files for 140 image(s):
+  IMG_4821.jpg  -&gt;  IMG_4821_small.jpg  (1600x1067.jpg)
+  ...
+Dry run: nothing was written yet. Originals stay untouched. Happy? Add --do-it.
+</code></pre>
+<p><strong>Rails that matter for photos</strong>: originals are never touched — new <code>*_small</code> files are written beside them (if the target name is taken, it's skipped, not overwritten). Only pass <code>--replace</code> (with <code>--do-it</code>) when you truly want originals gone, and Chapter 2 says: backup first.</p>
+<p>Other moves:</p>
+<table>
+<thead>
+<tr>
+<th>You want</th>
+<th>Command</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Max edge 1200</td>
+<td><code>--max-edge 1200</code></td>
+</tr>
+<tr>
+<td>Exact width, keep aspect</td>
+<td><code>--width 800</code></td>
+</tr>
+<tr>
+<td>Only some files</td>
+<td>add <code>--match "IMG_*.jpg"</code></td>
+</tr>
+<tr>
+<td>Smaller files (lower quality)</td>
+<td>add <code>--quality 70</code></td>
+</tr>
+<tr>
+<td>Also convert format</td>
+<td>add <code>--format webp</code> (or <code>jpg</code>, <code>png</code>)</td>
+</tr>
+</tbody>
+</table>
+<p>Already-resized files (<code>*_small</code>) are skipped on the next run, so re-running the same command on an already-done folder is safe.</p>
+<h2>Convert: <code>scripts/convert_images.py</code></h2>
+<pre><code class="language-bash">python scripts/convert_images.py ~/Pictures/scans --to webp
+python scripts/convert_images.py ~/Pictures/scans --to jpg --do-it
+</code></pre>
+<p>Again: dry run first, then <code>--do-it</code>. Originals always kept, existing targets never overwritten.</p>
+<h2>Zero-Python built-ins</h2>
+<p><strong>Mac <code>sips</code></strong> (no Python needed at all):</p>
+<pre><code class="language-bash">sips -Z 1600 ~/Pictures/listing-photos/*.jpg    # -Z = max edge, overwrites in place!
+</code></pre>
+<p>⚠️ Read that comment again: <code>sips</code> <em>overwrites the original file by default</em> — the exact opposite safety posture from the tested script. Redirect the output folder yourself if you use it widely:</p>
+<pre><code class="language-bash">mkdir -p ~/Pictures/small
+sips -Z 1600 -s format jpeg ~/Pictures/listing-photos/*.jpg --out ~/Pictures/small
+</code></pre>
+<p><strong>Mac <code>sips</code> also converts formats:</strong> <code>sips -s format png a.webp --out a.png</code></p>
+<p><strong>Windows:</strong> the built-ins for images are famously weak; a safe pattern is one image at a time from the Photos app, or PowerShell with the System.Drawing API (functional but long — this is a case where asking an AI co-pilot for <em>the exact loop</em> works well, and where you should refuse <code>-Force</code> or in-place overwrites without a backup). Honestly: <code>pip install Pillow</code> once and use the tested script.</p>
+<h2>One flag that catches everyone: quality</h2>
+<p>80–85 is the sweet spot for listing photos. Below 60 you'll see smearing; above 95 you'll burn bandwidth for no visible change (except PNG, which is lossless and ignores JPEG-style quality the same way).</p><footer>The Everyday Batch-File Automation Handbook &middot; by Asdale Dynamics, LLC &middot; MIT License &middot; Education only; never medical or compliance advice.</footer>
+</main>
+</div>
+</body>
+</html>

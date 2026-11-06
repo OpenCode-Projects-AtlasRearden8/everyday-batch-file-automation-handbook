@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Home — Everyday Batch-File Automation Handbook</title>
+<style>
+:root { --ink:#1f2430; --soft:#5a6270; --line:#e4e7ee; --paper:#ffffff; --wash:#f6f8fb; --accent:#2b6cb0; }
+* { box-sizing:border-box; }
+body { margin:0; font:17px/1.65 Georgia, 'Times New Roman', serif; color:var(--ink); background:var(--paper); }
+.layout { display:flex; max-width:1080px; margin:0 auto; padding:2rem 1rem; gap:2.5rem; }
+nav { flex:0 0 190px; position:sticky; top:2rem; align-self:flex-start; font-family:Verdana, sans-serif; }
+nav h1 { font-size:1.05rem; margin:0 0 .4rem; }
+nav p.brand { font-size:.8rem; color:var(--soft); margin:.2rem 0 1rem; }
+nav ol { list-style:none; margin:0; padding:0; font-size:.9rem; }
+nav ol a { display:block; padding:.35rem .5rem; color:var(--soft); text-decoration:none; border-left:3px solid transparent; }
+nav ol a:hover { color:var(--accent); }
+nav ol a.active { border-left-color:var(--accent); color:var(--accent); font-weight:bold; }
+main { flex:1; min-width:0; max-width:700px; }
+main h1, main h2, main h3, main h4 { line-height:1.25; font-family:Verdana, sans-serif; }
+main h1 { font-size:1.9rem; border-bottom:2px solid var(--line); padding-bottom:.4rem; }
+main h2 { font-size:1.35rem; margin-top:2rem; }
+h3 { font-size:1.1rem; }
+p, li { max-width:66ch; }
+a { color:var(--accent); }
+code { font-family:ui-monospace, 'Cascadia Code', Consolas, Menlo, monospace; font-size:.85em; background:var(--wash); border:1px solid var(--line); border-radius:3px; padding:.08em .35em; }
+pre { background:#22262e; color:#e8eaee; padding:1rem 1.2rem; border-radius:8px; overflow-x:auto; }
+pre code { background:none; border:none; color:inherit; padding:0; font-size:.88em; }
+table { border-collapse:collapse; margin:1.2rem 0; font-family:Verdana, sans-serif; font-size:.85rem; }
+th, td { border:1px solid var(--line); padding:.45em .8em; text-align:left; vertical-align:top; }
+th { background:var(--wash); }
+blockquote { margin:1.2rem 0; padding:.6rem 1.2rem; border-left:4px solid var(--accent); background:var(--wash); }
+blockquote p { max-width:none; }
+footer { border-top:1px solid var(--line); margin-top:2.5rem; padding:1.2rem 0; font-family:Verdana, sans-serif; font-size:.8rem; color:var(--soft); }
+@media (max-width:800px){ .layout { flex-direction:column; } nav { position:static; width:100%; } }
+</style>
+</head>
+<body>
+<div class="layout">
+<nav>
+<h1>Everyday Batch-File Automation Handbook</h1>
+<p class="brand">Asdale Dynamics, LLC</p>
+<ol>
+<a href="index.html" class=active>Home</a>
+<a href="01-start-here.html">Start Here</a>
+<a href="02-safety-first.html">Safety First</a>
+<a href="03-mass-rename.html">Mass Renames</a>
+<a href="04-csv-join-split.html">CSVs</a>
+<a href="05-pdf-join-split.html">PDFs</a>
+<a href="06-image-resize.html">Images</a>
+<a href="07-format-conversions.html">Other Formats</a>
+<a href="08-folder-rules.html">Folder Rules</a>
+<a href="09-ai-copilot.html">AI Co-Pilot</a>
+<a href="10-cookbook.html">Cookbook</a>
+</ol>
+</nav>
+<main>
+<h1>The Everyday Batch-File Automation Handbook</h1>
+<p><strong>Mass renames, format conversions, PDF/CSV joining and splitting, image resizing, and folder rules — with tested scripts and AI as your co-pilot.</strong></p>
+<p>A beginner-friendly, plain-English manual for one-off batch file jobs on Windows and Mac. Every recipe in the handbook is backed by a script in <code>scripts/</code> that you can run today, and every script is covered by automated tests in <code>tests/</code> — <strong>tests instead of prose</strong>, so you can trust what you copy-paste.</p>
+<p>Written for people who are not programmers: registered nurses, small-business owners, authors, and anyone drowning in files. Explained like a friend would, never condescending.</p>
+<blockquote>
+<p><strong>Safety rule #1:</strong> every script in this handbook does a <strong>dry run by default</strong>. Nothing changes until you add <code>--do-it</code>. Read chapter 2 first.</p>
+</blockquote>
+<hr />
+<h2>What's inside</h2>
+<table>
+<thead>
+<tr>
+<th>You want to...</th>
+<th>Read</th>
+<th>Run</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Rename 200 files at once</td>
+<td><a href="docs/03-mass-rename.md">Ch. 3 — Mass renames</a></td>
+<td><code>python scripts/batch_rename.py</code></td>
+</tr>
+<tr>
+<td>Join or split CSV files</td>
+<td><a href="docs/04-csv-join-split.md">Ch. 4 — CSVs</a></td>
+<td><code>python scripts/join_csv.py</code> / <code>split_csv.py</code></td>
+</tr>
+<tr>
+<td>Merge or split PDFs</td>
+<td><a href="docs/05-pdf-join-split.md">Ch. 5 — PDFs</a></td>
+<td><code>python scripts/join_pdfs.py</code> / <code>split_pdfs.py</code></td>
+</tr>
+<tr>
+<td>Resize / convert images</td>
+<td><a href="docs/06-image-resize.md">Ch. 6 — Images</a></td>
+<td><code>python scripts/resize_images.py</code> / <code>convert_images.py</code></td>
+</tr>
+<tr>
+<td>Convert other formats</td>
+<td><a href="docs/07-format-conversions.md">Ch. 7 — Other conversions</a></td>
+<td>(one-liner recipes)</td>
+</tr>
+<tr>
+<td>Clean up a messy Downloads folder</td>
+<td><a href="docs/08-folder-rules.md">Ch. 8 — Folder rules</a></td>
+<td><code>python scripts/sort_folder.py</code></td>
+</tr>
+<tr>
+<td>Have AI write/adapt these for you</td>
+<td><a href="docs/09-ai-copilot.md">Ch. 9 — AI co-pilot</a></td>
+<td>(prompt recipes)</td>
+</tr>
+</tbody>
+</table>
+<p>Supporting chapters:</p>
+<ul>
+<li><a href="docs/01-start-here.md">Ch. 1 — Start here</a>: what this is, who it's for, how to run Python.</li>
+<li><a href="docs/02-safety-first.md">Ch. 2 — Safety first</a>: dry runs, staging folders, backups, what never to touch.</li>
+<li><a href="docs/10-cookbook.md">Ch. 10 — Cookbook</a>: quick Windows/Mac one-liners side by side.</li>
+</ul>
+<h2>Quick start</h2>
+<p>You need Python 3 (free) — see <a href="docs/01-start-here.md">Ch. 1</a> for install steps on Windows and Mac.</p>
+<pre><code class="language-bash"># 1. Clone or download this handbook
+
+# 2. Preview a rename (dry run — nothing changes yet)
+python scripts/batch_rename.py ~/Downloads/shots --replace IMG_ IMG-
+
+# 3. Hmm, that looks right. Actually do it:
+python scripts/batch_rename.py ~/Downloads/shots --replace IMG_ IMG- --do-it
+
+# 4. Test everything yourself (optional but satisfying)
+python -m unittest discover -s tests -v
+</code></pre>
+<p>Two scripts need one optional helper each (exact commands in their chapters):</p>
+<ul>
+<li>PDF chapters → <code>pip install pypdf</code></li>
+<li>Image chapters → <code>pip install Pillow</code></li>
+</ul>
+<p>Everything else (renames, CSVs, folder rules, the test suite) needs <strong>zero installs</strong>.</p>
+<h2>Verify it works</h2>
+<pre><code class="language-bash">python -m unittest discover -s tests
+</code></pre>
+<p>All tests pass out of the box (PDF/image tests skip automatically if you haven't installed the optional helpers). Rebuild the website with <code>python build_site.py</code> — it regenerates everything in <code>site/</code> from <code>docs/</code>.</p>
+<h2>Using AI as your script co-pilot</h2>
+<p>This handbook teaches a loop, not just files: (1) run a dry run, (2) check the preview, (3) commit with <code>--do-it</code>, (4) verify. Chapter 9 gives you copy-paste prompts to hand an AI assistant (like Claude, ChatGPT, or opencode) so it adapts these scripts to your exact mess — and the chapter insists you keep the dry-run habit even when the AI says "trust me."</p>
+<h2>Repository layout</h2>
+<pre><code>docs/     the handbook itself (Markdown, one chapter per file)
+scripts/  tested, dry-run-first tools for each chapter
+tests/    automated proof the scripts behave (python -m unittest)
+site/     static HTML version of the handbook (generated by build_site.py)
+</code></pre>
+<h2>Companion projects</h2>
+<p>This handbook is the <em>hands-on</em> sibling of two related projects:</p>
+<ul>
+<li><strong>automation-friend-guide</strong> — the concepts: what folders, scripts, and "automation" even are.</li>
+<li><strong>local-file-organizer-cli</strong> — a single finished tool for everyday sorting; this handbook is for the one-off jobs a tool can't anticipate.</li>
+</ul>
+<h2>About</h2>
+<p>Produced by <strong>Asdale Dynamics, LLC</strong> (Indiana) — Dylan Asdale, RN turned AI author. He explains AI "like a friend would": plain English, step by step, never condescending. Find more at <a href="https://dylanasdale.github.io">dylanasdale.github.io</a> and in <em>The Massive AI Manual</em>.</p>
+<p>Healthcare workers: this is education only, never medical or compliance advice.</p>
+<h2>License</h2>
+<p>MIT — see <a href="LICENSE">LICENSE</a>. Copyright (c) 2026 Asdale Dynamics, LLC. Use it, remix it, sell handouts built from it — just keep the license line intact.</p><footer>The Everyday Batch-File Automation Handbook &middot; by Asdale Dynamics, LLC &middot; MIT License &middot; Education only; never medical or compliance advice.</footer>
+</main>
+</div>
+</body>
+</html>

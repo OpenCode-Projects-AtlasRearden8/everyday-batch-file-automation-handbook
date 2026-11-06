@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Safety First — Everyday Batch-File Automation Handbook</title>
+<style>
+:root { --ink:#1f2430; --soft:#5a6270; --line:#e4e7ee; --paper:#ffffff; --wash:#f6f8fb; --accent:#2b6cb0; }
+* { box-sizing:border-box; }
+body { margin:0; font:17px/1.65 Georgia, 'Times New Roman', serif; color:var(--ink); background:var(--paper); }
+.layout { display:flex; max-width:1080px; margin:0 auto; padding:2rem 1rem; gap:2.5rem; }
+nav { flex:0 0 190px; position:sticky; top:2rem; align-self:flex-start; font-family:Verdana, sans-serif; }
+nav h1 { font-size:1.05rem; margin:0 0 .4rem; }
+nav p.brand { font-size:.8rem; color:var(--soft); margin:.2rem 0 1rem; }
+nav ol { list-style:none; margin:0; padding:0; font-size:.9rem; }
+nav ol a { display:block; padding:.35rem .5rem; color:var(--soft); text-decoration:none; border-left:3px solid transparent; }
+nav ol a:hover { color:var(--accent); }
+nav ol a.active { border-left-color:var(--accent); color:var(--accent); font-weight:bold; }
+main { flex:1; min-width:0; max-width:700px; }
+main h1, main h2, main h3, main h4 { line-height:1.25; font-family:Verdana, sans-serif; }
+main h1 { font-size:1.9rem; border-bottom:2px solid var(--line); padding-bottom:.4rem; }
+main h2 { font-size:1.35rem; margin-top:2rem; }
+h3 { font-size:1.1rem; }
+p, li { max-width:66ch; }
+a { color:var(--accent); }
+code { font-family:ui-monospace, 'Cascadia Code', Consolas, Menlo, monospace; font-size:.85em; background:var(--wash); border:1px solid var(--line); border-radius:3px; padding:.08em .35em; }
+pre { background:#22262e; color:#e8eaee; padding:1rem 1.2rem; border-radius:8px; overflow-x:auto; }
+pre code { background:none; border:none; color:inherit; padding:0; font-size:.88em; }
+table { border-collapse:collapse; margin:1.2rem 0; font-family:Verdana, sans-serif; font-size:.85rem; }
+th, td { border:1px solid var(--line); padding:.45em .8em; text-align:left; vertical-align:top; }
+th { background:var(--wash); }
+blockquote { margin:1.2rem 0; padding:.6rem 1.2rem; border-left:4px solid var(--accent); background:var(--wash); }
+blockquote p { max-width:none; }
+footer { border-top:1px solid var(--line); margin-top:2.5rem; padding:1.2rem 0; font-family:Verdana, sans-serif; font-size:.8rem; color:var(--soft); }
+@media (max-width:800px){ .layout { flex-direction:column; } nav { position:static; width:100%; } }
+</style>
+</head>
+<body>
+<div class="layout">
+<nav>
+<h1>Everyday Batch-File Automation Handbook</h1>
+<p class="brand">Asdale Dynamics, LLC</p>
+<ol>
+<a href="index.html">Home</a>
+<a href="01-start-here.html">Start Here</a>
+<a href="02-safety-first.html" class="active">Safety First</a>
+<a href="03-mass-rename.html">Mass Renames</a>
+<a href="04-csv-join-split.html">CSVs</a>
+<a href="05-pdf-join-split.html">PDFs</a>
+<a href="06-image-resize.html">Images</a>
+<a href="07-format-conversions.html">Other Formats</a>
+<a href="08-folder-rules.html">Folder Rules</a>
+<a href="09-ai-copilot.html">AI Co-Pilot</a>
+<a href="10-cookbook.html">Cookbook</a>
+</ol>
+</nav>
+<main>
+<h1>Chapter 2 — Safety First: The Dry-Run Habit</h1>
+<p>You can run every recipe in this book without fear, because of one habit that costs five extra seconds and has saved more careers than we can count:</p>
+<ol>
+<li><strong>Run the command with nothing extra</strong> — it only <em>previews</em>.</li>
+<li><strong>Read the preview.</strong> Does the list match the files you care about? Numbers look sane?</li>
+<li><strong>Only then add <code>--do-it</code></strong> and run it again.</li>
+</ol>
+<p>Script authors call step 1 a <strong>dry run</strong> — like running the tap before you jump in the shower. In this handbook, <em>the dry run is not an option you might forget; it is the default</em>. The script physically cannot touch a file unless you say <code>--do-it</code>.</p>
+<p>Windows has its own built-in flavor of this in PowerShell, spelled <code>-WhatIf</code>:</p>
+<pre><code class="language-powershell">Rename-Item -WhatIf ...
+</code></pre>
+<p><code>-WhatIf</code> means <em>print what you would do, do nothing</em>. Same tap-before-shower rule, built into PowerShell itself. When you ask an AI co-pilot for PowerShell (Chapter 9), make <code>-WhatIf</code> part of the request.</p>
+<h2>Four rails, all standard on the tested scripts</h2>
+<table>
+<thead>
+<tr>
+<th>Rail</th>
+<th>What it means</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Dry run by default</strong></td>
+<td>No preview, no <code>--do-it</code>, no changes. Ever.</td>
+</tr>
+<tr>
+<td><strong>Never overwrite</strong></td>
+<td>If the result name already exists, the script <em>cancels the whole run</em> rather than stomping an older file.</td>
+</tr>
+<tr>
+<td><strong>Never delete</strong></td>
+<td>Moving and renaming only. The <code>_unsorted/</code> bucket exists so unknown files have a home instead of a shredder.</td>
+</tr>
+<tr>
+<td><strong>Atomic cancel</strong></td>
+<td>If <em>any</em> file in the run would collide, <em>nothing</em> happens — not a half-finished mess.</td>
+</tr>
+</tbody>
+</table>
+<h2>The staging folder trick</h2>
+<p>Before a big job, copy a handful of sample files into a scratch folder and dry-run against that:</p>
+<pre><code class="language-bash">mkdir /tmp/rehearsal        # Mac: any scratch spot
+</code></pre>
+<pre><code class="language-powershell">New-Item -ItemType Directory -Force rehearsal   # Windows
+</code></pre>
+<p>Run the full command (preview, then <code>--do-it</code>) on ten sample files. If the ten come out right, the two hundred will too. This takes two minutes and eliminates that heart-drop feeling.</p>
+<h2>The backup question</h2>
+<p>The tested scripts never delete anything, so <em>worst case</em> after a mistake is: files are sitting somewhere unexpected, with <code>-1</code> suffixes or in <code>_unsorted/</code>. That's recoverable by hand. Still, for genuinely precious data (tax records, patient-facing documents, book scans with no re-scan), make a copy first. A cheap <code>zip</code> of the source folder before a big job is the adult version of a helmet:</p>
+<pre><code class="language-bash"># Mac
+zip -r pictures-backup.zip ~/Pictures/batch
+</code></pre>
+<pre><code class="language-powershell"># Windows
+Compress-Archive -Path $HOME\Pictures\batch -Destination Pictures-backup.zip
+</code></pre>
+<h2>What to refuse, every time</h2>
+<ul>
+<li>Any script whose <em>first</em> move is <code>Remove-Item</code> / <code>rm</code> / <code>del</code>.</li>
+<li>Any AI-generated command with <code>&gt; $null</code> or <code>2&gt;&amp;1</code> hiding the preview output. You must be able to see the plan.</li>
+<li>Any command containing the word "remove," "delete," "clean up," or "purge" run against your only copy of important files.</li>
+<li>Overwrite-anything flags (<code>-Force</code>, <code>--force</code>, <code>--overwrite</code>) without a backup, unless you fully understand them.</li>
+</ul>
+<p>If an AI proposes something that deletes or overwrites, ask it to add the same rails here. Chapter 9 gives you the exact words.</p><footer>The Everyday Batch-File Automation Handbook &middot; by Asdale Dynamics, LLC &middot; MIT License &middot; Education only; never medical or compliance advice.</footer>
+</main>
+</div>
+</body>
+</html>
